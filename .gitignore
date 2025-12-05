@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# MLflow
+mlflow_data/
+
+# Airflow runtime
+airflow/logs/
+airflow/postgres-data/
+airflow/plugins/
+
+# VSCode
+.vscode/
+
+# Docker
+*.log
