@@ -176,87 +176,112 @@ Scheduled retraining (cron-based)
 
 ### Installation Rapide
 
-```bash
-# 1. Cloner le repository
+##### 1. Cloner le repository
+```
 git clone https://github.com/riadshrn/mlops-iris.git
 cd mlops-iris
-
-# 2. Lancer tous les services
-docker-compose up --build
-
-# 3. Attendre que tous les services démarrent (~2-3 minutes)
 ```
 
-### Accès aux Services
 
-Une fois les services démarrés, accédez aux interfaces :
+##### 2. Lancer tous les services
+```
+docker-compose up --build
+```
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **Streamlit UI** | http://localhost:8501 | - |
-| **FastAPI Docs** | http://localhost:8000/docs | - |
-| **MLflow UI** | http://localhost:5000 | - |
-| **Airflow UI** | http://localhost:8080 | admin / admin |
+##### 3. Attendre que tous les services démarrent (~2-3 minutes)
+
 
 ---
 
-## Utilisation
+**IMPORTANT :** Au premier lancement, aucun modèle n'est encore disponible.
 
-### 01. Via Stramlit
+Lorsque vous ouvrez Streamlit pour la première fois (http://localhost:8501/), il est normal que :
+- aucun modèle ne soit présent,
+- aucune métrique ne soit affichée,
+- les prédictions ne fonctionnent pas encore.
 
-#### Entraîner un Modèle
+Aucun modèle n'a encore été entraîné.  
+Deux options s'offrent à vous pour entraîner vos modèles.
 
-1. Ouvrir http://localhost:8501
-2. Dans la sidebar, sélectionner un modèle (RF, SVM, LogReg)
-3. Cliquer sur **"Réentraîner ce modèle"**
-4. Attendre le message de succès avec l'accuracy
+--- 
 
-#### Visualiser les Métriques
+#### OPTION 1 — Entraîner un modèle manuellement depuis Streamlit
 
-1. Sélectionner un modèle
-2. Cliquer sur **"Afficher les métriques"**
-3. Consulter :
-   - Accuracy globale
-   - Matrice de confusion
-   - Rapport de classification (precision, recall, f1-score)
+Dans Streamlit :
 
-#### Faire une Prédiction
+1. Aller dans l'onglet "Réentraîner un modèle"
+2. Choisir un modèle :
+   - RandomForest
+   - SVM
+   - Logistic Regression
+3. Cliquer sur "Réentraîner ce modèle"
 
-1. Dans la sidebar "Caractéristiques de la fleur" :
-   - Sepal length (cm) : ex. 5.1
-   - Sepal width (cm) : ex. 3.5
-   - Petal length (cm) : ex. 1.4
-   - Petal width (cm) : ex. 0.2
-2. Cliquer sur **"Prédire la classe"**
-3. Visualiser :
-   - Classe prédite avec image
-   - Niveau de confiance
-   - Distribution des probabilités
 
-#### Charger un Modèle depuis MLflow
 
-1. Section "Mise à jour depuis MLflow Registry"
-2. Sélectionner un modèle et une version
-3. Cliquer sur **"Charger modèle MLflow"**
-4. Les métriques s'affichent automatiquement
+#### OPTION 2 — Entraîner automatiquement les 3 modèles via Airflow
 
-### 02. Via MLflow UI
+1. Ouvrir Airflow : http://localhost:8080/
+   Identifiants :
+   - username: admin
+   - password: admin
 
-1. Ouvrir http://localhost:5000
-2. Naviguer vers **"Experiments"**
-3. Sélectionner l'expérience **"iris-automl"**
-4. Comparer les runs
-5. Consulter les métriques et artefacts
+2. Repérer le DAG : train_iris_models_parallel
 
-### 03. Via Airflow
+3. Activer le DAG (switch ON)
 
-1. Ouvrir http://localhost:8080
-2. Login : `admin` / `admin`
-3. Activer le DAG **"train_iris_model"**
-4. Le modèle RF sera réentraîné toutes les minutes
-5. Consulter les logs d'exécution
+Airflow exécutera automatiquement les entraînements toutes les 2 minutes :
+- RandomForest
+- SVM
+- Logistic Regression
 
 ---
+
+##### 4. Charger un modèle depuis MLflow Registry dans Streamlit
+
+Une fois un modèle entraîné :
+
+1. Aller dans l'onglet "Mise à jour depuis MLflow Registry"
+2. Sélectionner :
+   - modèle (rf, svm, logreg)
+   - version (v1, v2, v3…)
+3. Cliquer sur "Charger le modèle"
+
+Streamlit affichera :
+- accuracy
+- métriques détaillées
+- rapport de classification
+- matrice de confusion
+- modèle utilisé
+
+
+<p align="center">
+  <img src="images/stramlit-done.png" alt="Architecture du projet" width="100%">
+</p>
+
+Les modèles seront :
+- loggé dans MLflow Tracking,
+- enregistré dans MLflow Model Registry,
+- sauvegardé en artefact local.
+
+#### Visualiser tous les modèles dans MLflow Tracking UI
+
+Ouvrir MLflow : http://localhost:5000/
+
+Dans l'experiment "iris-automl", vous verrez :
+- toutes les exécutions (runs),
+- les hyperparamètres,
+- les artefacts (confusion matrix, metrics.json),
+- les versions du Model Registry,
+- les métriques globales et par classe.
+
+Modèles visibles dans le registry :
+- iris-rf (v1, v2, v3…)
+- iris-svm (v1, v2, v3…)
+- iris-logreg (v1, v2, v3…)
+
+
+
+
 
 
 ### Documentation Interactive
@@ -270,8 +295,20 @@ Accédez à la documentation Swagger interactive :
 
 ### Interface MLflow
 
+#### MLFlow_models
+
 <p align="center">
-  <img src="images/MLFlow-Registred_model.png" alt="Architecture du projet" width="40%">
+  <img src="images/MLFlow_models.png" alt="Architecture du projet" width="100%">
+</p>
+
+#### MLFlow_metrics
+<p align="center">
+  <img src="images/MLFlow_metrics.png" alt="Architecture du projet" width="100%">
+</p>
+
+#### MLFlow_Registred_model
+<p align="center">
+  <img src="images/MLFlow-Registred_model.png" alt="Architecture du projet" width="60%">
 </p>
 
 ### Interface AirFlow
@@ -279,6 +316,8 @@ Accédez à la documentation Swagger interactive :
 <p align="center">
   <img src="images/Task-duration-airflow.png" alt="Architecture du projet" width="70%">
 </p>
+
+
 
 ---
 
