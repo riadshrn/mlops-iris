@@ -51,11 +51,11 @@ with DAG(
 ) as dag:
 
     # Tâche 1 : Entraîner RandomForest
-    train_rf = PythonOperator(
-        task_id="train_random_forest",
-        python_callable=call_fastapi_train,
-        op_kwargs={'model_name': 'rf'},
-    )
+    #train_rf = PythonOperator(
+    #    task_id="train_random_forest",
+    #    python_callable=call_fastapi_train,
+    #    op_kwargs={'model_name': 'rf'},
+    #)
 
     # Tâche 2 : Entraîner SVM
     train_svm = PythonOperator(
