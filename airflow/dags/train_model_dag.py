@@ -43,7 +43,7 @@ default_args = {
 with DAG(
     dag_id="train_iris_models_parallel",
     default_args=default_args,
-    description='Entraîne les 3 modèles Iris en PARALLÈLE toutes les 2 minutes',
+    description='Entraîne les 2 modèles Iris en PARALLÈLE toutes les 2 minutes',
     schedule_interval="*/2 * * * *",  # Toutes les 2 minutes
     start_date=datetime(2025, 1, 1),
     catchup=False,
