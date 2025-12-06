@@ -4,6 +4,7 @@ __pycache__/
 
 # MLflow
 mlflow_data/
+mlflow_data/mlflow.db
 
 # Airflow runtime
 airflow/logs/
