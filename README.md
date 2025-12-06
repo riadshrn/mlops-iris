@@ -1,4 +1,4 @@
-# Iris AutoML - MLOps Pipeline Complete
+# Complete MLOps Architecture – Training, Versioning & Deployment (Demo Project)
 
 <p align="center">
   <img src="https://www.python.org/static/community_logos/python-logo.png" width="110">
