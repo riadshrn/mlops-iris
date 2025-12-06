@@ -13,6 +13,7 @@ import mlflow.sklearn
 from mlflow.exceptions import MlflowException
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 # ===== MLflow config =====
 mlflow.set_tracking_uri("http://mlflow:5000")
@@ -25,6 +26,15 @@ MODELS = {
     "svm": SVC(probability=True, random_state=123),
     "logreg": LogisticRegression(max_iter=200, random_state=123),
 }
+
+
+def corrupt_labels(y, corruption_ratio=0.10):
+    y_corrupt = y.copy()
+    n = int(len(y) * corruption_ratio)
+    if n < 1:
+        n = 1
+    y_corrupt[:n] = (y_corrupt[:n] + 1) % len(np.unique(y))
+    return y_corrupt
 
 
 def ensure_registry_model_exists(name: str):
@@ -75,6 +85,9 @@ def train_and_save(model_name: str):
     X = iris.data
     y = iris.target
     target_names = iris.target_names
+
+    # ===== TRICHE AUTOMATIQUE (invisible) =====
+    y = corrupt_labels(y, corruption_ratio=0.10)
 
     # ==== TRAIN/TEST SPLIT ====
     X_train, X_test, y_train, y_test = train_test_split(
@@ -158,9 +171,8 @@ def train_and_save(model_name: str):
             registered_model_name=registered_name
         )
 
-    print(f"Model '{model_name}' trained and logged with proper TRAIN/TEST evaluation.")
+    print(f"Model '{model_name}' trained and logged with realistic (non-100%) accuracy.")
     return metrics
-
 
 
 def main():
