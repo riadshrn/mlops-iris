@@ -234,7 +234,7 @@ Dans **Streamlit** http://localhost:8501/ :
 
 
 
-#### OPTION 2 — Entraîner automatiquement les 3 modèles via Airflow
+#### OPTION 2 — Entraîner automatiquement les 2 modèles via Airflow
 
 1. Ouvrir **Airflow** : http://localhost:8080/
    Identifiants :
@@ -246,9 +246,11 @@ Dans **Streamlit** http://localhost:8501/ :
 3. Activer le DAG (switch ON)
 
 Airflow exécutera automatiquement les entraînements toutes les 2 minutes :
-- RandomForest
 - SVM
 - Logistic Regression
+
+**RandomForest :** ce modèle n’est pas exécuté par Airflow (trop lourd pour un run parallèle fréquent).
+Il doit être entraîné manuellement depuis Streamlit dans l’onglet “Réentraîner un modèle”.
 
 ---
 
